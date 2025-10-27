@@ -1,0 +1,35 @@
+import Board from "@/components/Board";
+
+type Props = {
+    xIsNext: boolean,
+    squares: string[],
+    onPlay: (nextSquares: string[]) => void,
+}
+
+export default function BoardContainer({xIsNext, squares, onPlay}: Readonly<Props>) {
+    const getNextPlayer = () => {
+        return xIsNext ? "X" : "O";
+    }
+    const handleClick = (index: number) => {
+        if (squares[index] || getWinner()) {
+            return;
+        }
+        const nextSquares = squares.slice();
+        nextSquares[index] = getNextPlayer();
+        onPlay(nextSquares);
+    }
+    const getWinner = () => {
+        const lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+        for (const element of lines) {
+            const [a, b, c] = element;
+            if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+                return squares[a];
+            }
+        }
+        return null;
+    }
+
+    return (
+        <Board squares={squares} onHandleClick={handleClick} winner={getWinner()} nextPlayer={getNextPlayer()}/>
+    )
+}
